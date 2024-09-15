@@ -1,0 +1,70 @@
+import json
+from typing import Optional, Dict, Any
+
+import aiohttp
+
+from api.schemas.boss import BossSchema
+from api.schemas.op_status import OpStatusSchema
+from api.schemas.user import UserSchema, UserCreateSchema
+
+
+class HttpClient:
+    def __init__(self, api_url: str, api_key: str):
+        self.api_url = api_url
+        self.api_key = api_key
+
+    async def request(self, path: str, method: str = 'GET', params: Optional[Dict] = None) -> Optional[Any]:
+        if params is None:
+            params = {}
+
+        url = f'{self.api_url}{path}'
+        headers = {'x-api-key': self.api_key}
+
+        async with aiohttp.ClientSession() as session:
+            try:
+                if method == 'GET':
+                    async with session.get(url, headers=headers) as response:
+                        return await self._handle_response(response)
+                elif method == 'POST':
+                    async with session.post(url, headers=headers, json=params) as response:
+                        return await self._handle_response(response)
+            except aiohttp.ClientError as e:
+                print(f"An error occurred: {e}")
+                return None
+
+    @staticmethod
+    async def _handle_response(response: aiohttp.ClientResponse):
+        return OpStatusSchema(
+            status_code=response.status,
+            message=response.reason,
+            data=await response.json()
+        )
+
+
+    async def get_notify_list(self):
+        data = await self.request('/api/notify')
+        return data
+
+    async def get_user(self, user_id: int) -> OpStatusSchema:
+        data = await self.request(f'/api/users/{user_id}')
+        return data
+        # if data:
+        #     return UserSchema(**data)
+        # return None
+
+    async def add_user(self, user: UserCreateSchema) -> OpStatusSchema:
+        print(user.model_dump())
+        data = await self.request('/api/users', method='POST', params=user.model_dump())
+        return data
+        # if data:
+        #     return UserSchema(**data)
+        # return None
+
+    async def get_today_bosses(self) -> OpStatusSchema:
+        data = await self.request('/api/bosses/today')
+        return data
+        # if data:
+        #     return [BossSchema(**boss) for boss in data]
+        # return None
+
+

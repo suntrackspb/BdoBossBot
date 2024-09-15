@@ -1,0 +1,60 @@
+{
+    "version": 1,
+    "disable_existing_loggers": false,
+    "formatters": {
+        "access": {
+            "()": "uvicorn.logging.AccessFormatter",
+            "fmt": "%(asctime)s : %(levelname)s : %(client_addr)s - \"%(request_line)s\" %(status_code)s",
+            "use_colors": true
+        },
+        "standard": {
+            "format": "%(asctime)s - %(levelname)s - %(message)s"
+        }
+    },
+    "handlers": {
+        "access": {
+            "formatter": "access",
+            "class": "logging.StreamHandler",
+            "stream": "ext://sys.stdout"
+        },
+        "standard_file": {
+            "formatter": "standard",
+            "class": "logging.FileHandler",
+            "filename": "logs/access.log",
+            "encoding": "utf-8"
+        },
+        "standard_console": {
+            "formatter": "standard",
+            "class": "logging.StreamHandler",
+            "stream": "ext://sys.stdout"
+        },
+        "error_console": {
+            "formatter": "standard",
+            "class": "logging.StreamHandler",
+            "stream": "ext://sys.stderr"
+        },
+        "error_file": {
+            "formatter": "standard",
+            "class": "logging.FileHandler",
+            "filename": "logs/error.log",
+            "encoding": "utf-8"
+        }
+    },
+    "loggers": {
+        "uvicorn.access": {
+            "handlers": ["access", "standard_file"],
+            "level": "INFO",
+            "propagate": false
+        },
+        "uvicorn.error": {
+            "handlers": ["error_console", "error_file"],
+            "level": "ERROR",
+            "propagate": false
+        },
+        "uvicorn.custom_logger": {
+            "handlers": ["standard_console"],
+            "level": "INFO",
+            "propagate": false
+        }
+    }
+}
