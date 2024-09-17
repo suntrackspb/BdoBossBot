@@ -1,24 +1,17 @@
 from aiogram import Router, F
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message, FSInputFile
-from environs import Env
 
 from api.schemas.boss import BossSchema
 from api.schemas.user import UserSchema, UserCreateSchema
 from bot.keyboards.inline import notification_keyboard
-from bot.utils.constants import BotButtons
+from bot.utils.constants import BotButtons, get_status_message
 from bot.keyboards.reply import main_keyboard
 from bot.keyboards.webapp import webapp_builder
 from bot.utils.http_client import HttpClient
 from bot.utils.functions import down_counter
 
 router = Router()
-
-env = Env()
-env.read_env()
-
-bot_token = env('BOT_TOKEN')
-web_api_url = env('WEB_API_URL')
 
 
 @router.message(CommandStart())
@@ -90,6 +83,7 @@ async def week(message: Message):
 
 @router.message(F.text == BotButtons.NOTIFY.value)
 async def notify(message: Message, **middlewares):
-    # client: HttpClient = middlewares.get('client')
-    # request = await client.get_notify_list()
-    return await message.answer("Notification controls", reply_markup=notification_keyboard())
+    client: HttpClient = middlewares.get('client')
+    request = await client.get_user(message.from_user.id)
+    user = UserSchema(**request.data)
+    return await message.answer(get_status_message(user), reply_markup=notification_keyboard())

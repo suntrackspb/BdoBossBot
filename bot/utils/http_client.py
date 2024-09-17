@@ -73,6 +73,6 @@ class HttpClient:
         data = await self.request('/api/bosses/next')
         return data
 
-    async def update_user(self, user: UserSchema, params: Dict) -> OpStatusSchema:
+    async def update_user(self, user: UserSchema, params: dict) -> OpStatusSchema:
         data = await self.request(f'/api/users/{user.chat_id}', method='PATCH', params=params)
         return data

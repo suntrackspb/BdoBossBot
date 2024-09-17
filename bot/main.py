@@ -5,9 +5,11 @@ from aiogram.types import BotCommand
 from aiogram.utils.callback_answer import CallbackAnswerMiddleware
 from aiohttp import ClientConnectorError
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
 from environs import Env
 
-from bot.handlers import default
+from api.schemas.notification import NotificationSchema
+from bot.handlers import default_router, callback_router
 from bot.middleware.web_api_middleware import WebApiMiddleware
 from bot.utils.http_client import HttpClient
 
@@ -26,7 +28,8 @@ dp.update.middleware(WebApiMiddleware(client=http_client))
 dp.callback_query.middleware(CallbackAnswerMiddleware())
 
 dp.include_routers(
-    default.router
+    callback_router,
+    default_router
 )
 
 
@@ -40,10 +43,12 @@ async def set_bot_commands() -> None:
     )
 
 
-async def send_notification(bot: Bot, http_client: HttpClient) -> None:
+async def send_notification(bot_: Bot, http_client_: HttpClient) -> None:
     try:
-        data = await http_client.get_notify_list()
-        print(data)
+        request = await http_client_.get_notify_list()
+        for user in request.data:
+            notify = NotificationSchema(**user)
+            await bot_.send_message(chat_id=notify.chat_id, text=f"Через Х минут появятся {notify.boss_names}")
     except ClientConnectorError:
         print("No connection")
 
@@ -56,12 +61,13 @@ async def on_startup() -> None:
     await set_bot_commands()
 
 
-
 async def main() -> None:
     try:
-        # scheduler = AsyncIOScheduler()
-        # scheduler.add_job(send_notification, "interval", seconds=5, args=(bot, http_client))
-        # scheduler.start()
+        scheduler = AsyncIOScheduler()
+        # scheduler.add_job(send_notification, "interval", minutes=1, args=(bot, http_client))
+        trigger = CronTrigger(second='1')
+        scheduler.add_job(send_notification, trigger, args=(bot, http_client))
+        scheduler.start()
         await dp.start_polling(bot, polling_timeout=3)
     finally:
         await dp.storage.close()
