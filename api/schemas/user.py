@@ -38,3 +38,13 @@ class UserCreateSchema(BaseModel):
     chat_id: int
     username: str | None = None
     fullname: str | None = None
+
+
+class UserUpdateSchema(BaseModel):
+    is_subscribed: bool | None = None
+    is_promoted: bool | None = None
+
+    push1: bool | None = None
+    push5: bool | None = None
+    push10: bool | None = None
+    push30: bool | None = None

@@ -5,7 +5,7 @@ from starlette import status
 
 from api.dependencies import get_user_service
 from api.schemas.op_status import Status
-from api.schemas.user import UserSchema, UserCreateSchema
+from api.schemas.user import UserSchema, UserCreateSchema, UserUpdateSchema
 from api.services.users import UserService
 from api.utils.check_signature import verify_api_key
 
@@ -88,3 +88,19 @@ async def create_user(
 ):
     print(payload)
     return await service.add_user(user=payload)
+
+
+@router.patch(
+    path="/users/{user_id}",
+    response_model=UserSchema,
+    summary="Add a new user",
+    response_description="New user",
+)
+async def update_user(
+        user_id: int,
+        payload: UserUpdateSchema,
+        # _: Annotated[None, Depends(verify_api_key)],
+        service: Annotated[UserService, Depends(get_user_service)]
+):
+    user = await service.get_user(user_id=user_id)
+    return await service.update_user(user=user, user_update=payload)

@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.models import User, Notification, Boss
 from api.schemas.boss import UserBossSchema
+from api.schemas.user import UserUpdateSchema
 
 
 class UserCrud:
@@ -62,8 +63,10 @@ class UserCrud:
         await self.db.refresh(user)
         return user
 
-    async def update_user(self, user: User) -> User:
-        await self.db.merge(user)
+    async def update_user(self, user: User, user_update: UserUpdateSchema) -> User:
+        update_data = user_update.dict(exclude_unset=True)
+        for key, value in update_data.items():
+            setattr(user, key, value)
         await self.db.commit()
         await self.db.refresh(user)
         return user
