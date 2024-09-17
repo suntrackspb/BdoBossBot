@@ -16,6 +16,10 @@ def main_keyboard():
     builder.row(
         KeyboardButton(text=BotButtons.NOTIFY.value),
     )
+    builder.row(
+        KeyboardButton(text=BotButtons.PROMO.value),
+        KeyboardButton(text=BotButtons.ADD_PROMO.value),
+    )
     return builder.as_markup(resize_keyboard=True)
 
 
