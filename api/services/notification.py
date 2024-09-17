@@ -1,9 +1,8 @@
+from datetime import datetime, timedelta
 from typing import List
 
 from api.config import config as cfg
 from api.crud.notifications import NotificationCrud
-from datetime import datetime, timedelta
-
 from api.models import Boss, User
 from api.schemas.op_status import Status
 from api.utils.constants import Push
@@ -19,11 +18,9 @@ class NotificationService:
         await self.crud.add_notification(chat_id=user.chat_id, bosses=bosses_ids)
         return Status(status='OK', message='Successfully added notification')
 
-
     async def add_notifications(self, user: User, bosses: list):
         await self.crud.add_notification(chat_id=user.chat_id, bosses=bosses)
         return Status(status='OK', message='Successfully added notification')
-
 
     async def get_notify_users_by_boss(self, boss: Boss):
         current_time = datetime.now().strftime("%H:%M")
