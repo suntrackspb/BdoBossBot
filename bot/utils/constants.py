@@ -6,3 +6,5 @@ class BotButtons(Enum):
     TODAY = 'Today Bosses'
     WEEK = 'Weekly Bosses'
     NOTIFY = 'Notification'
+    SETTINGS = 'Settings'
+    HELP = 'Help'
