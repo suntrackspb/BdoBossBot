@@ -5,6 +5,7 @@ from environs import Env
 
 from api.schemas.boss import BossSchema
 from api.schemas.user import UserSchema, UserCreateSchema
+from bot.keyboards.inline import notification_keyboard
 from bot.utils.constants import BotButtons
 from bot.keyboards.reply import main_keyboard
 from bot.keyboards.webapp import webapp_builder
@@ -85,3 +86,10 @@ async def week(message: Message):
         caption="Week bosses",
         reply_markup=main_keyboard()
     )
+
+
+@router.message(F.text == BotButtons.NOTIFY.value)
+async def notify(message: Message, **middlewares):
+    # client: HttpClient = middlewares.get('client')
+    # request = await client.get_notify_list()
+    return await message.answer("Notification controls", reply_markup=notification_keyboard())
