@@ -1,13 +1,25 @@
 from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
 
+from bot.utils.types import ProfileCallbackFactory
+
 
 def notification_keyboard():
     builder = InlineKeyboardBuilder()
-
-    builder.add(InlineKeyboardButton(text="Кнопка 1", callback_data="button1"))
-    builder.add(InlineKeyboardButton(text="Кнопка 2", callback_data="button2"))
+    builder.row(
+        InlineKeyboardButton(
+            text="Subscribe On",
+            callback_data=ProfileCallbackFactory(
+                action="is_subscribed",
+                status=True
+            ).pack()
+        ),
+        InlineKeyboardButton(
+            text="Subscribe Off",
+            callback_data=ProfileCallbackFactory(
+                action="is_subscribed",
+                status=False
+            ).pack()
+        )
+    )
 
     return builder.as_markup()
-
-
-
