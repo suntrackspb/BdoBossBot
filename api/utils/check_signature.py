@@ -24,7 +24,6 @@ def check_telegram_signature(init_data: dict) -> bool:
 
 
 async def verify_api_key(x_api_key: Annotated[str, Header()]):
-    print(x_api_key)
     if x_api_key != cfg.tlg.bot_token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
