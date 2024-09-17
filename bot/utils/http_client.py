@@ -28,6 +28,9 @@ class HttpClient:
                 elif method == 'POST':
                     async with session.post(url, headers=headers, json=params) as response:
                         return await self._handle_response(response)
+                elif method == 'PATCH':
+                    async with session.patch(url, headers=headers, json=params) as response:
+                        return await self._handle_response(response)
             except aiohttp.ClientError as e:
                 print(f"An error occurred: {e}")
                 return None
@@ -68,4 +71,8 @@ class HttpClient:
 
     async def get_next_boss(self):
         data = await self.request('/api/bosses/next')
+        return data
+
+    async def update_user(self, user: UserSchema, params: Dict) -> OpStatusSchema:
+        data = await self.request(f'/api/users/{user.chat_id}', method='PATCH', params=params)
         return data
