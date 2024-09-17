@@ -40,7 +40,6 @@ class HttpClient:
             data=await response.json()
         )
 
-
     async def get_notify_list(self):
         data = await self.request('/api/notify')
         return data
@@ -67,4 +66,6 @@ class HttpClient:
         #     return [BossSchema(**boss) for boss in data]
         # return None
 
-
+    async def get_next_boss(self):
+        data = await self.request('/api/bosses/next')
+        return data
