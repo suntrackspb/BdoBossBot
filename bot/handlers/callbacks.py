@@ -17,4 +17,4 @@ async def callback_vpn_profile(callback: CallbackQuery, callback_data: ProfileCa
     user = UserSchema(**request.data)
     update = await client.update_user(user=user, params={callback_data.action: callback_data.status})
     user = UserSchema(**update.data)
-    return await callback.message.edit_text(get_status_message(user), reply_markup=notification_keyboard())
+    return await callback.message.edit_text(get_status_message(user), reply_markup=notification_keyboard(user=user))

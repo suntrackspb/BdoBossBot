@@ -86,4 +86,4 @@ async def notify(message: Message, **middlewares):
     client: HttpClient = middlewares.get('client')
     request = await client.get_user(message.from_user.id)
     user = UserSchema(**request.data)
-    return await message.answer(get_status_message(user), reply_markup=notification_keyboard())
+    return await message.answer(get_status_message(user), reply_markup=notification_keyboard(user=user))
