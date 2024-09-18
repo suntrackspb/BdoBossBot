@@ -8,7 +8,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from environs import Env
 
-from api.schemas.notification import NotificationSchema
+from api.schemas.notification import NotificationSchema, BossNotificationSchema
 from bot.handlers import default_router, callback_router
 from bot.middleware.web_api_middleware import WebApiMiddleware
 from bot.utils.http_client import HttpClient
@@ -46,9 +46,12 @@ async def set_bot_commands() -> None:
 async def send_notification(bot_: Bot, http_client_: HttpClient) -> None:
     try:
         request = await http_client_.get_notify_list()
-        for user in request.data:
-            notify = NotificationSchema(**user)
-            await bot_.send_message(chat_id=notify.chat_id, text=f"Через Х минут появятся {notify.boss_names}")
+        notify = BossNotificationSchema(**request)
+        for user in notify.users:
+            await bot_.send_message(
+                chat_id=user.chat_id,
+                text=f"Через {notify.time_difference} минут появятся {notify.boss_names}"
+            )
     except ClientConnectorError:
         print("No connection")
 
