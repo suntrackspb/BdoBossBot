@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
 from api.dependencies import get_notify_service, get_boss_service, get_user_service
-from api.schemas.notification import NotificationSchema, AddNotification
+from api.schemas.notification import NotificationSchema, AddNotification, BossNotificationSchema
 from api.schemas.op_status import Status
 from api.schemas.user import SpecificUserSchema
 from api.services.bosses import BossService
@@ -90,7 +90,7 @@ async def get_user_info(
 
 @router.get(
     path="/notify",
-    response_model=List[NotificationSchema],
+    response_model=BossNotificationSchema | None,
     summary="Get list of users to notify about the next boss",
     response_description="List of users to notify about the next boss",
 )

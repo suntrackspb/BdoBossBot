@@ -5,8 +5,14 @@ from pydantic import BaseModel
 
 class NotificationSchema(BaseModel):
     chat_id: int
-    username: str
+    fullname: str
+    # boss_names: str
+
+
+class BossNotificationSchema(BaseModel):
     boss_names: str
+    time_difference: int
+    users: List[NotificationSchema]
 
 
 class AddNotification(BaseModel):

@@ -41,6 +41,7 @@ class NotificationCrud:
         query = (
             select(
                 User.chat_id,
+                User.fullname,
                 User.username,
                 User.is_subscribed,
                 User.push1,
