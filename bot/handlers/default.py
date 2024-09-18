@@ -20,8 +20,8 @@ async def start(message: Message, **middlewares):
     request = await client.get_user(user_id=message.from_user.id)
     if request.status_code == 200:
         data = UserSchema(**request.data)
-        return await message.answer(f"Welcome back {message.from_user.full_name},\n"
-                                    f"you registered {data.created_at.strftime('%Y-%m-%d %H:%M:%S')}.",
+        return await message.answer(f"С возвращением {message.from_user.full_name},\n"
+                                    f"ваш аккаунт был создан {data.created_at.strftime('%Y-%m-%d %H:%M:%S')}.",
                                     reply_markup=main_keyboard())
     elif request.status_code == 404:
         await client.add_user(
@@ -31,7 +31,7 @@ async def start(message: Message, **middlewares):
                 username=message.from_user.username,
             )
         )
-        return await message.answer(f'Welcome {message.from_user.full_name}, you has been registered')
+        return await message.answer(f'Добро пожаловать {message.from_user.full_name}, вы были зарегистрированы.',)
     else:
         await message.answer(f'{request.status_code} {request.message}')
 
@@ -76,7 +76,7 @@ async def next_boss(message: Message, **middlewares):
 async def week(message: Message):
     return await message.answer_photo(
         photo=FSInputFile('bot/images/boss2024.jpg'),
-        caption="Week bosses",
+        caption="Расписание боссов на неделю",
         reply_markup=main_keyboard()
     )
 
