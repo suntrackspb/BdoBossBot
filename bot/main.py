@@ -46,14 +46,17 @@ async def set_bot_commands() -> None:
 async def send_notification(bot_: Bot, http_client_: HttpClient) -> None:
     try:
         request = await http_client_.get_notify_list()
-        notify = BossNotificationSchema(**request)
-        for user in notify.users:
-            await bot_.send_message(
-                chat_id=user.chat_id,
-                text=f"Через {notify.time_difference} минут появятся {notify.boss_names}"
-            )
+        if request.data is not None:
+            notify = BossNotificationSchema(**request)
+            for user in notify.users:
+                await bot_.send_message(
+                    chat_id=user.chat_id,
+                    text=f"Через {notify.time_difference} минут появятся {notify.boss_names}"
+                )
     except ClientConnectorError:
         print("No connection")
+    except AttributeError:
+        print("Empty data")
 
     # await bot.send_message(chat_id=CHAT_ID, text="Это ваше запланированное уведомление!")
 
@@ -67,9 +70,9 @@ async def on_startup() -> None:
 async def main() -> None:
     try:
         scheduler = AsyncIOScheduler()
-        # scheduler.add_job(send_notification, "interval", minutes=1, args=(bot, http_client))
-        trigger = CronTrigger(second='1')
-        scheduler.add_job(send_notification, trigger, args=(bot, http_client))
+        scheduler.add_job(send_notification, "interval", seconds=5, args=(bot, http_client))
+        # trigger = CronTrigger(second='1')
+        # scheduler.add_job(send_notification, args=(bot, http_client))
         scheduler.start()
         await dp.start_polling(bot, polling_timeout=3)
     finally:
