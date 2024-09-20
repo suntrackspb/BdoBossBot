@@ -32,9 +32,9 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('code', sa.String(length=50), nullable=False),
     sa.Column('loot', sa.String(length=255), nullable=False),
-    sa.Column('expiry', sa.DateTime(timezone=True), nullable=False),
+    sa.Column('expire', sa.DateTime(timezone=True), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
-    sa.Column('owner', sa.String(length=50), nullable=False),
+    sa.Column('owner', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('users',
