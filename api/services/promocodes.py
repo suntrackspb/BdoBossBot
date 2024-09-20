@@ -1,5 +1,3 @@
-from sqlalchemy.util import await_only
-
 from api.config import config as cfg
 from api.crud import PromoCodesCrud
 from api.models import PromoCode
@@ -17,5 +15,5 @@ class PromoCodeService:
     async def get_actual_promo_code(self):
         return await self.crud.get_promo_codes()
 
-    async def check_promo_code(self, promo_code: PromoCodeSchema):
-        return await self.crud.check_promo_code_exist(promo_code=PromoCode(**promo_code.model_dump()))
+    async def check_promo_code(self, promo_code: str):
+        return await self.crud.check_promo_code_exist(promo_code=promo_code)

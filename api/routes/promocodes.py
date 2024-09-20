@@ -23,6 +23,22 @@ async def get_active_promo_codes(
     return await service.get_actual_promo_code()
 
 
+@router.get(
+    path="/promo/{code}",
+    response_model=PromoCodeSchema | None,
+    summary="Check promo code existence",
+    response_description="Promo code",
+)
+async def get_specific_promo_codes(
+        code: str,
+        service: Annotated[PromoCodeService, Depends(get_promo_code_service)]
+):
+    exists = await service.check_promo_code(promo_code=code)
+    if not exists:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Promo code not found")
+    return exists
+
+
 @router.post(
     path="/promo",
     response_model=PromoCodeSchema,
@@ -34,7 +50,8 @@ async def add_promo_code(
         _: Annotated[None, Depends(verify_api_key)],
         service: Annotated[PromoCodeService, Depends(get_promo_code_service)]
 ):
-    promo = await service.check_promo_code(promo_code=payload)
-    if promo is None:
+    promo = await service.check_promo_code(promo_code=payload.code)
+    print(promo)
+    if promo:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Code already exists")
     return await service.add_promo_code(promo_code=payload)

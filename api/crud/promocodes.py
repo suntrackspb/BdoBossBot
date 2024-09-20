@@ -18,15 +18,16 @@ class PromoCodesCrud:
         return promo_code
 
     async def get_promo_codes(self) -> Sequence[PromoCode]:
+        current_time = datetime.now()
         result = await self.db.execute(
-            select(PromoCode).where(PromoCode.expiry >= datetime.now)
+            select(PromoCode).where(PromoCode.expire >= current_time)
         )
         return result.scalars().all()
 
-    async def check_promo_code_exist(self, promo_code: PromoCode) -> bool:
+    async def check_promo_code_exist(self, promo_code: str) -> PromoCode | None:
         result = await self.db.execute(
-            select(PromoCode).where(PromoCode.code >= promo_code.code)
+            select(PromoCode).where(PromoCode.code == promo_code)
         )
         if result:
-            return True
-        return False
+            return result.scalars().first()
+        return None
