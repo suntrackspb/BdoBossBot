@@ -4,9 +4,9 @@ from api.schemas.user import UserSchema
 
 
 class BotButtons(Enum):
-    NEXT = 'Следующий'
-    TODAY = 'На сегодня'
-    WEEK = 'На неделю'
+    NEXT = 'Когда следующий босс?'
+    TODAY = 'Боссы на сегодня'
+    WEEK = 'Боссы на неделю'
     NOTIFY = 'Уведомления'
     PROMO = 'Купоны'
     ADD_PROMO = 'Добавить купон'
