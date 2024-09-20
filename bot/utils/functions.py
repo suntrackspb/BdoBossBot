@@ -1,4 +1,7 @@
 from datetime import datetime, timedelta
+from typing import List
+
+from api.schemas.promocodes import PromoCodeSchema
 
 
 def declension(number, words):
@@ -47,4 +50,17 @@ def down_counter(date_str):
     return ' '.join(result)
 
 
+def promo_counter(promo_expire: datetime):
+    current_date = datetime.now()
+    diff = promo_expire.replace(tzinfo=None) - current_date
+    return declension(diff.days, ['день', 'дня', 'дней'])
+
+
+def format_promo_message(promos: List[PromoCodeSchema]):
+    items = []
+    for promo in promos:
+        expire = promo_counter(promo.expire)
+        string = f'<code>{promo.code}</code>\n<i>Осталось: {expire}</i>\n\n'
+        items.append(string)
+    return ''.join(items)
 
