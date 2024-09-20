@@ -37,16 +37,16 @@ class InitData(BaseModel):
         return int(datetime.strptime(input_value, '%Y-%m-%dT%H:%M:%S.%fZ').timestamp() + 10800)
 
 
-class InitDataSchema(BaseModel):
+class NotificationAddSchema(BaseModel):
     init_data: InitData
-    boss_list: List[int]
+    boss_id: int
+    is_selected: bool
 
     model_config = camel_to_snake
 
 
-class AddNotificationInitSchema(BaseModel):
+class NotificationAllSchema(BaseModel):
     init_data: InitData
-    boss_id: int
     is_selected: bool
 
     model_config = camel_to_snake
