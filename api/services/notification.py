@@ -14,14 +14,19 @@ class NotificationService:
         self.crud = crud
         self.cfg = cfg
 
-    async def generate_notification(self, user: User, bosses: List[Boss]):
+    async def generate_notification(self, user_id: int, bosses: List[Boss]):
         bosses_ids = [boss.id for boss in bosses]
-        await self.crud.add_notification(chat_id=user.chat_id, bosses=bosses_ids)
+        await self.crud.add_notifications(chat_id=user_id, bosses=bosses_ids)
         return OpStatusSchema(status_code=200, message='Successfully added notification')
 
-    async def add_notifications(self, user: User, bosses: list):
-        await self.crud.add_notification(chat_id=user.chat_id, bosses=bosses)
-        return OpStatusSchema(status_code=200, message='Successfully added notification')
+    async def add_notifications(self, user: User, boss_id: int, is_selected: bool):
+        if is_selected:
+            await self.crud.add_notification(chat_id=user.chat_id, boss_id=boss_id)
+            return OpStatusSchema(status_code=200, message='Successfully added notification')
+        else:
+            await self.crud.remove_notification(chat_id=user.chat_id, boss_id=boss_id)
+            return OpStatusSchema(status_code=200, message='Successfully removed notification')
+
 
     async def get_notify_users_by_boss(self, boss: Boss):
         current_time = datetime.now().strftime("%H:%M")

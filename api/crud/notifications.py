@@ -14,7 +14,15 @@ class NotificationCrud:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def add_notification(self, chat_id: int, bosses: list):
+    async def add_notification(self, chat_id: int, boss_id: int):
+        self.db.add(Notification(chat_id=chat_id, boss_id=boss_id))
+
+    async def remove_notification(self, chat_id: int, boss_id: int):
+        query = delete(Notification).where(Notification.chat_id == chat_id).where(Notification.boss_id == boss_id)
+        await self.db.execute(query)
+        await self.db.commit()
+
+    async def add_notifications(self, chat_id: int, bosses: list):
         query = delete(Notification).where(Notification.chat_id == chat_id)
         await self.db.execute(query)
         await self.db.commit()
