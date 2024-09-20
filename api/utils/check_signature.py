@@ -1,26 +1,50 @@
-import hmac
 import hashlib
+import hmac
+from operator import itemgetter
 from typing import Annotated
 
 from fastapi import Header, HTTPException
 from starlette import status
 
 from api.config import config as cfg
+from api.schemas.telegram import InitDataSchema, InitData
 
 
-def check_telegram_signature(init_data: dict) -> bool:
-    token = cfg.telegram.bot_token
-    # Получаем hash из данных
-    received_hash = init_data.pop('hash', None)
+def check_webapp_signature(init_data: InitDataSchema) -> InitDataSchema:
+    token = cfg.tlg.bot_token
 
-    # Создаем строку параметров, отсортированных по алфавиту
-    data_check_string = '\n'.join([f'{key}={value}' for key, value in sorted(init_data.items())])
+    if init_data.init_data.hash is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Hash is not specified in the request",
+        )
 
-    # Создаем HMAC-SHA256
-    secret_key = hmac.new(key=token.encode(), msg=data_check_string.encode(), digestmod=hashlib.sha256).hexdigest()
+    data = init_data.copy(deep=True)
+    init_data.init_data.user = init_data.init_data.user.__str__()
+    init_dict = init_data.init_data.model_dump()
 
-    # Сравниваем хеши
-    return secret_key == received_hash
+    hash_ = init_dict.pop("hash")
+
+    data_check_string = "\n".join(
+        f"{k}={v}" for k, v in sorted(init_dict.items(), key=itemgetter(0))
+    )
+
+    secret_key = hmac.new(
+        key=b"WebAppData", msg=token.encode(), digestmod=hashlib.sha256
+    )
+    calculated_hash = hmac.new(
+        key=secret_key.digest(), msg=data_check_string.encode(), digestmod=hashlib.sha256
+    ).hexdigest()
+
+    print(hash_, calculated_hash, sep="\n")
+
+    if hash_ != calculated_hash:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid signature",
+        )
+
+    return data
 
 
 async def verify_api_key(x_api_key: Annotated[str, Header()]):
