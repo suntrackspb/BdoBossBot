@@ -1,29 +1,30 @@
-from typing import Annotated, List
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
 from api.dependencies import get_notify_service, get_boss_service, get_user_service
-from api.schemas.notification import NotificationSchema, AddNotification, BossNotificationSchema
-from api.schemas.op_status import Status
+from api.schemas.notification import BossNotificationSchema
+from api.schemas.op_status import OpStatusSchema
+from api.schemas.telegram import InitDataSchema, AddNotificationInitSchema
 from api.schemas.user import SpecificUserSchema
 from api.services.bosses import BossService
 from api.services.notification import NotificationService
 from api.services.users import UserService
-from api.utils.check_signature import verify_api_key
+from api.utils.check_signature import verify_api_key, check_webapp_signature
 
 router = APIRouter()
 
 
 @router.post(
     path="/notify/all_bosses",
-    response_model=Status,
+    response_model=OpStatusSchema,
     summary="Generate notifications for all bosses",
     response_description="Status operation",
 )
 async def gen_all(
         user_id: int,
-_: Annotated[None, Depends(verify_api_key)],
+        _: Annotated[None, Depends(verify_api_key)],
         user_service: Annotated[UserService, Depends(get_user_service)],
         boss_service: Annotated[BossService, Depends(get_boss_service)],
         notify_service: Annotated[NotificationService, Depends(get_notify_service)]
@@ -59,20 +60,31 @@ _: Annotated[None, Depends(verify_api_key)],
 
 @router.post(
     path="/notify",
-    response_model=Status,
+    response_model=OpStatusSchema,
     summary="Add notifications from Web App",
     response_description="Status operation",
 )
 async def add_notification(
-        payload: AddNotification,
-_: Annotated[None, Depends(verify_api_key)],
+        init_data: Annotated[InitDataSchema, Depends(check_webapp_signature)],
         user_service: Annotated[UserService, Depends(get_user_service)],
         notify_service: Annotated[NotificationService, Depends(get_notify_service)],
 ):
-    user = await user_service.get_user(user_id=payload.chat_id)
+    user = await user_service.get_user(user_id=init_data.init_data.user.id)
     if user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-    return await notify_service.add_notifications(user.chat_id, payload.boss_list)
+    return await notify_service.add_notifications(user, init_data.boss_list)
+
+
+@router.post(
+    path="/notify_test",
+    response_model=OpStatusSchema,
+    summary="Add notifications from Web App",
+    response_description="Status operation",
+)
+async def add_notification(
+        init_data: AddNotificationInitSchema
+):
+    return OpStatusSchema(status_code=200, message="Successfully added notification")
 
 
 @router.get(
@@ -95,7 +107,7 @@ async def get_user_info(
     response_description="List of users to notify about the next boss",
 )
 async def get_notify_list(
-_: Annotated[None, Depends(verify_api_key)],
+        # _: Annotated[None, Depends(verify_api_key)],
         boss_service: Annotated[BossService, Depends(get_boss_service)],
         notify_service: Annotated[NotificationService, Depends(get_notify_service)]
 ):

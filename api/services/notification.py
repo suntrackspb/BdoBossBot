@@ -5,7 +5,7 @@ from api.config import config as cfg
 from api.crud.notifications import NotificationCrud
 from api.models import Boss, User
 from api.schemas.notification import BossNotificationSchema
-from api.schemas.op_status import Status
+from api.schemas.op_status import OpStatusSchema
 from api.utils.constants import Push
 
 
@@ -17,11 +17,11 @@ class NotificationService:
     async def generate_notification(self, user: User, bosses: List[Boss]):
         bosses_ids = [boss.id for boss in bosses]
         await self.crud.add_notification(chat_id=user.chat_id, bosses=bosses_ids)
-        return Status(status='OK', message='Successfully added notification')
+        return OpStatusSchema(status_code=200, message='Successfully added notification')
 
     async def add_notifications(self, user: User, bosses: list):
         await self.crud.add_notification(chat_id=user.chat_id, bosses=bosses)
-        return Status(status='OK', message='Successfully added notification')
+        return OpStatusSchema(status_code=200, message='Successfully added notification')
 
     async def get_notify_users_by_boss(self, boss: Boss):
         current_time = datetime.now().strftime("%H:%M")
@@ -32,7 +32,7 @@ class NotificationService:
         current_time_dt = datetime.strptime(current_time, "%H:%M")
         time_difference = (boss_time - current_time_dt).total_seconds() / 60  # разница в минутах
 
-        # DEBUG & TESTS
+        # DEBUG AND TESTS
         # current_time = datetime.strptime("18:50", "%H:%M")
         # time_difference = (boss_time - current_time).total_seconds() / 60
         # print(time_difference, datetime.now().strftime("%H:%M:%S"))

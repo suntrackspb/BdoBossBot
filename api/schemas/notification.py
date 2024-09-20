@@ -16,6 +16,6 @@ class BossNotificationSchema(BaseModel):
 
 
 class AddNotification(BaseModel):
-    chat_id: int
+    init_data: dict
     boss_list: List[int]
     push_list: List[int]

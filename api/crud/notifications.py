@@ -19,10 +19,8 @@ class NotificationCrud:
         await self.db.execute(query)
         await self.db.commit()
 
-        for boss in bosses:
-            notification = Notification(chat_id=chat_id, boss_id=boss)
-            self.db.add(notification)
-
+        notifications = [Notification(chat_id=chat_id, boss_id=boss_id) for boss_id in bosses]
+        self.db.add_all(notifications)
         await self.db.commit()
 
     async def get_notify_by_user(self, user_id: int):
@@ -54,6 +52,7 @@ class NotificationCrud:
             .join(Boss, Notification.boss_id == Boss.id)
             .join(User, Notification.chat_id == User.chat_id)
             .where(
+                User.is_subscribed == True,
                 Notification.boss_id == boss_id,
                 user_push == True,
             )
