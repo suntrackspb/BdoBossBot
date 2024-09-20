@@ -64,6 +64,6 @@ class PromoCode(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     code: Mapped[str] = mapped_column(String(50))
     loot: Mapped[str] = mapped_column(String(255))
-    expiry: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    expire: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now)
-    owner: Mapped[str] = mapped_column(String(50))
+    owner: Mapped[int] = mapped_column(String(50))
