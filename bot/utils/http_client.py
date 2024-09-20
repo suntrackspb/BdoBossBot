@@ -5,6 +5,7 @@ import aiohttp
 
 from api.schemas.boss import BossSchema
 from api.schemas.op_status import OpStatusSchema
+from api.schemas.promocodes import PromoCodeSchema
 from api.schemas.user import UserSchema, UserCreateSchema
 
 
@@ -50,24 +51,15 @@ class HttpClient:
     async def get_user(self, user_id: int) -> OpStatusSchema:
         data = await self.request(f'/api/users/{user_id}')
         return data
-        # if data:
-        #     return UserSchema(**data)
-        # return None
 
     async def add_user(self, user: UserCreateSchema) -> OpStatusSchema:
         print(user.model_dump())
         data = await self.request('/api/users', method='POST', params=user.model_dump())
         return data
-        # if data:
-        #     return UserSchema(**data)
-        # return None
 
     async def get_today_bosses(self) -> OpStatusSchema:
         data = await self.request('/api/bosses/today')
         return data
-        # if data:
-        #     return [BossSchema(**boss) for boss in data]
-        # return None
 
     async def get_next_boss(self):
         data = await self.request('/api/bosses/next')
@@ -75,4 +67,16 @@ class HttpClient:
 
     async def update_user(self, user: UserSchema, params: dict) -> OpStatusSchema:
         data = await self.request(f'/api/users/{user.chat_id}', method='PATCH', params=params)
+        return data
+
+    async def get_promos(self):
+        data = await self.request('/api/promo')
+        return data
+
+    async def add_promo(self, promo: PromoCodeSchema):
+        data = await self.request('/api/promo', method='POST', params=promo.model_dump())
+        return data
+
+    async def check_promo(self, code: str):
+        data = await self.request(f'/api/promo/{code}')
         return data
