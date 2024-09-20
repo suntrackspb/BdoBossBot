@@ -35,7 +35,21 @@ class PostgresCfg:
 
 
 @dataclass
+class ProxyConfig:
+    ENABLED: bool
+    PROXY_TYPE: str
+    PROXY_HOST: str
+    PROXY_PORT: int
+    PROXY_LOGIN: str
+    PROXY_PASSWORD: str
+
+    def __post_init__(self):
+        self.URL = f"{self.PROXY_TYPE}://{self.PROXY_LOGIN}:{self.PROXY_PASSWORD}@{self.PROXY_HOST}:{self.PROXY_PORT}"
+
+
+@dataclass
 class Config:
     app: AppConfig
     pgsql: PostgresCfg
     tlg: TelegramConfig
+    proxy: ProxyConfig

@@ -4,7 +4,7 @@ import logging.config
 
 from environs import Env
 
-from api.schemas.config import Config, AppConfig, PostgresCfg, TelegramConfig
+from api.schemas.config import Config, AppConfig, PostgresCfg, TelegramConfig, ProxyConfig
 
 with open('logging_config.json', 'r') as file:
     logging_config = json.load(file)
@@ -12,7 +12,7 @@ with open('logging_config.json', 'r') as file:
 logging.config.dictConfig(logging_config)
 
 
-def load_config(path: str | None = None) -> Config:
+def load_config() -> Config:
     env = Env()
     env.read_env()
     return Config(
@@ -28,12 +28,20 @@ def load_config(path: str | None = None) -> Config:
             host=env('POSTGRES_HOST'),
             port=int(env('POSTGRES_PORT')),
             name=env('POSTGRES_DB'),
-            echo=False
+            echo=True
         ),
         tlg=TelegramConfig(
             bot_token=env('BOT_TOKEN'),
             web_api_url=env('WEB_API_URL')
-        )
+        ),
+        proxy=ProxyConfig(
+            ENABLED=True,
+            PROXY_TYPE=env.str("PROXY_TYPE"),
+            PROXY_HOST=env.str("PROXY_HOST"),
+            PROXY_PORT=env.int("PROXY_PORT"),
+            PROXY_LOGIN=env.str("PROXY_LOGIN"),
+            PROXY_PASSWORD=env.str("PROXY_PASSWORD"),
+        ),
     )
 
 
