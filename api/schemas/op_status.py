@@ -1,14 +1,6 @@
 from dataclasses import dataclass
 from typing import Any
 
-from marshmallow import Schema
-
-
-@dataclass
-class Status:
-    status: str
-    message: str
-
 
 @dataclass
 class OpStatusSchema:
