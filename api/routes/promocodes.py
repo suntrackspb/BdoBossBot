@@ -47,11 +47,11 @@ async def get_specific_promo_codes(
 )
 async def add_promo_code(
         payload: PromoCodeSchema,
-        _: Annotated[bool, Depends(verify_webapp_signature)],
+        auth: Annotated[int, Depends(verify_webapp_signature)],
         service: Annotated[PromoCodeService, Depends(get_promo_code_service)]
 ):
     promo = await service.check_promo_code(promo_code=payload.code)
-    print(promo)
+    print(promo, auth)
     if promo:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Code already exists")
     return await service.add_promo_code(promo_code=payload)
