@@ -8,9 +8,8 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 from alembic import context
 
 from api.database.base import Base
-from api.models.models import Boss, Notification, User
-from api.config import config as cfg
-from api.schemas.config import Config
+from common.config import config as cfg
+from common.schemas.config import Config
 
 settings: Config = cfg
 

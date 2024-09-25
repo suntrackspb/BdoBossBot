@@ -1,6 +1,6 @@
 from enum import Enum
 
-from api.schemas.user import UserSchema
+from common.schemas.user import UserSchema
 
 
 class BotButtons(Enum):

@@ -5,9 +5,9 @@ from fastapi import APIRouter, Depends
 
 from api.dependencies import get_boss_service
 from api.models.models import Boss
-from api.schemas.boss import BossSchema
 from api.services.bosses import BossService
-from api.utils.check_signature import verify_api_key
+from api.utils.check_signature import verify_webapp_signature
+from common.schemas.boss import BossSchema
 
 router = APIRouter()
 
@@ -27,8 +27,10 @@ async def get_bosses_list(
     response_model=BossSchema,
 )
 async def get_next_boss(
+        auth: Annotated[bool, Depends(verify_webapp_signature)],
         service: Annotated[BossService, Depends(get_boss_service)]
 ):
+    print(auth)
     return await service.get_next_boss()
 
 
@@ -47,7 +49,7 @@ async def get_today_boss(
     response_model=dict,
 )
 async def read_root(
-        _: Annotated[None, Depends(verify_api_key)],
+        _: Annotated[None, Depends(verify_webapp_signature)],
         service: Annotated[BossService, Depends(get_boss_service)]
 ) -> dict:
     with open('parts/bdo_bosses_2024_full.json', 'r', encoding='utf-8') as file:

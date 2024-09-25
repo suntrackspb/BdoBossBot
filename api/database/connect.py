@@ -2,8 +2,7 @@ from collections.abc import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 
-from api.config import config as cfg
-
+from common.config import config as cfg
 
 engine = create_async_engine(cfg.pgsql.url, echo=cfg.pgsql.echo)
 

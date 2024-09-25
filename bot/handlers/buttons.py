@@ -1,8 +1,8 @@
 from aiogram import Router, F
 from aiogram.types import Message, FSInputFile
 
-from api.schemas.boss import BossSchema
-from api.schemas.user import UserSchema
+from common.schemas.boss import BossSchema
+from common.schemas.user import UserSchema
 from bot.keyboards.inline import notification_keyboard
 from bot.keyboards.reply import main_keyboard
 from bot.utils.constants import BotButtons, get_status_message

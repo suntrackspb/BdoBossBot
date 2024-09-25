@@ -2,7 +2,7 @@ from aiogram import Router
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message
 
-from api.schemas.user import UserSchema, UserCreateSchema
+from common.schemas.user import UserSchema, UserCreateSchema
 from bot.keyboards.reply import main_keyboard
 from bot.keyboards.webapp import webapp_builder
 from bot.utils.http_client import HttpClient

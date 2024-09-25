@@ -1,6 +1,6 @@
 from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
 
-from api.schemas.user import UserSchema
+from common.schemas.user import UserSchema
 from bot.utils.types import ProfileCallbackFactory
 
 

@@ -5,12 +5,10 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import BotCommand
 from aiogram.utils.callback_answer import CallbackAnswerMiddleware
 from aiohttp import ClientConnectorError
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from apscheduler.triggers.cron import CronTrigger
 from environs import Env
 
-from api.config import config
-from api.schemas.notification import BossNotificationSchema
+from common.config import config
+from common.schemas.notification import BossNotificationSchema
 from bot.handlers import callback_router, default_router, button_router, promo_router
 from bot.middleware.web_api_middleware import WebApiMiddleware
 from bot.utils.http_client import HttpClient
@@ -74,10 +72,10 @@ async def on_startup() -> None:
 
 async def main() -> None:
     try:
-        scheduler = AsyncIOScheduler()
-        trigger = CronTrigger(second='1')
-        scheduler.add_job(send_notification, trigger=trigger, args=(bot, http_client))
-        scheduler.start()
+        # scheduler = AsyncIOScheduler()
+        # trigger = CronTrigger(second='1')
+        # scheduler.add_job(send_notification, trigger=trigger, args=(bot, http_client))
+        # scheduler.start()
         await dp.start_polling(bot, polling_timeout=3)
     finally:
         await dp.storage.close()

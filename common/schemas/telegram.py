@@ -51,4 +51,3 @@ class NotificationAllSchema(BaseModel):
 
     model_config = camel_to_snake
 
-

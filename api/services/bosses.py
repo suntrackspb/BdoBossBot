@@ -1,9 +1,9 @@
 from datetime import datetime
 
-from api.config import config as cfg
 from api.crud.bosses import BossCrud
 from api.models.models import Boss
 from api.utils.next_boss import NextBossService
+from common.config import config as cfg
 
 
 class BossService:

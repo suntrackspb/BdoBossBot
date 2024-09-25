@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from typing import List
 
-from api.schemas.promocodes import PromoCodeSchema
+from common.schemas.promocodes import PromoCodeSchema
 
 
 def declension(number, words):

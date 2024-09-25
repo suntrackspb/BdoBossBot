@@ -4,10 +4,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
 from api.dependencies import get_user_service
-from api.schemas.op_status import Status
-from api.schemas.user import UserSchema, UserCreateSchema, UserUpdateSchema
 from api.services.users import UserService
-from api.utils.check_signature import verify_api_key
+from api.utils.check_signature import check_webapp_signature, verify_webapp_signature
+from common.schemas.op_status import OpStatusSchema
+from common.schemas.user import UserSchema, UserCreateSchema, UserUpdateSchema
 
 router = APIRouter()
 
@@ -19,26 +19,16 @@ router = APIRouter()
     response_description="List of all users",
 )
 async def get_users(
-        _: Annotated[None, Depends(verify_api_key)],
+        user_id: Annotated[int, Depends(verify_webapp_signature)],
         service: Annotated[UserService, Depends(get_user_service)]
 ):
     """
-    Retrieve a list of all users.
-
-    This asynchronous function retrieves a list of all users from the database using the provided `UserService`. It requires an API key for authentication and access to the user service. The function performs the following steps:
-
-    1. Verifies the API key using the `verify_api_key` dependency to ensure the request is authenticated.
-    2. Retrieves a list of all users from the database via the `UserService`.
-    3. Returns the list of all users in the response with status code 200 OK.
-
-    - **None**: No input parameters are required for this function.
-    - _: Annotated[None, Depends(verify_api_key)]: A dependency to verify the API key used for authentication.
-    - service: Annotated[UserService, Depends(get_user_service)]: A dependency that provides access to the UserService instance required to interact with user data.
+    Get a list of all registered users.
 
     Returns:
-        - List[UserCreateSchema]: A list of all users in the database as defined by the `UserCreateSchema` model.
-    - **HTTP 200**: On successful retrieval, returns a list of all users.
+        List[UserCreateSchema]: List of all users.
     """
+    print(user_id)
     return await service.get_all_users()
 
 
@@ -51,7 +41,7 @@ async def get_users(
 )
 async def get_user_info(
         user_id: int,
-        _: Annotated[None, Depends(verify_api_key)],
+        # _: Annotated[None, Depends(verify_api_key)],
         service: Annotated[UserService, Depends(get_user_service)],
 
 ):
@@ -63,13 +53,13 @@ async def get_user_info(
 
 @router.delete(
     path="/users/{user_id}",
-    response_model=Status,
+    response_model=OpStatusSchema,
     summary="Delete a specific user by ID",
     response_description="Specific user",
 )
 async def delete_user(
         user_id: int,
-        _: Annotated[None, Depends(verify_api_key)],
+        _: Annotated[None, Depends(verify_webapp_signature)],
         service: Annotated[UserService, Depends(get_user_service)]
 ):
     return await service.del_user(user_id=user_id)
@@ -83,7 +73,7 @@ async def delete_user(
 )
 async def create_user(
         payload: UserCreateSchema,
-        _: Annotated[None, Depends(verify_api_key)],
+        _: Annotated[None, Depends(verify_webapp_signature)],
         service: Annotated[UserService, Depends(get_user_service)]
 ):
     print(payload)
@@ -93,14 +83,14 @@ async def create_user(
 @router.patch(
     path="/users/{user_id}",
     response_model=UserSchema,
-    summary="Add a new user",
+    summary="Update a specific user by ID",
     response_description="New user",
 )
 async def update_user(
         user_id: int,
         payload: UserUpdateSchema,
-        # _: Annotated[None, Depends(verify_api_key)],
         service: Annotated[UserService, Depends(get_user_service)]
 ):
+    await check_webapp_signature(payload.init_data)
     user = await service.get_user(user_id=user_id)
-    return await service.update_user(user=user, user_update=payload)
+    return await service.update_user(user=user, user_update=payload.payload)

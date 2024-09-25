@@ -1,7 +1,7 @@
-from api.config import config as cfg
 from api.crud.users import UserCrud
 from api.models import User
-from api.schemas.user import UserCreateSchema, SpecificUserSchema, UserUpdateSchema
+from common.config import config as cfg
+from common.schemas.user import UserCreateSchema, SpecificUserSchema, UserUpdateDataSchema
 
 
 class UserService:
@@ -33,5 +33,5 @@ class UserService:
     async def add_user(self, user: UserCreateSchema):
         return await self.crud.add_user(user=User(**user.model_dump()))
 
-    async def update_user(self, user: User, user_update: UserUpdateSchema):
+    async def update_user(self, user: User, user_update: UserUpdateDataSchema):
         return await self.crud.update_user(user=user, user_update=user_update)

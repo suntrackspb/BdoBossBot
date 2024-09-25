@@ -1,7 +1,7 @@
 from datetime import datetime
-from typing import List, Sequence
+from typing import Sequence
 
-from sqlalchemy import delete, select
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.models import PromoCode

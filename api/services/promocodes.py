@@ -1,7 +1,7 @@
-from api.config import config as cfg
 from api.crud import PromoCodesCrud
 from api.models import PromoCode
-from api.schemas.promocodes import PromoCodeSchema
+from common.config import config as cfg
+from common.schemas.promocodes import PromoCodeSchema
 
 
 class PromoCodeService:

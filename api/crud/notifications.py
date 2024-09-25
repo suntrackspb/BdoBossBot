@@ -1,13 +1,11 @@
-from typing import cast, List
+from typing import cast
 
-from sqlalchemy import Integer, Boolean, delete
-from sqlalchemy.future import select
+from sqlalchemy import Integer, delete
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 from sqlalchemy.orm import InstrumentedAttribute
-from sqlalchemy.testing.suite.test_reflection import users
 
 from api.models import Notification, User, Boss
-from api.schemas.notification import NotificationSchema
 
 
 class NotificationCrud:

@@ -1,25 +1,27 @@
-import json
 from typing import Optional, Dict, Any
 
 import aiohttp
 
-from api.schemas.boss import BossSchema
-from api.schemas.op_status import OpStatusSchema
-from api.schemas.promocodes import PromoCodeSchema
-from api.schemas.user import UserSchema, UserCreateSchema
+from common.config import config as cfg
+from common.schemas.op_status import OpStatusSchema
+from common.schemas.promocodes import PromoCodeSchema
+from common.schemas.user import UserSchema, UserCreateSchema
+from common.utils.security import encrypt_data
 
 
 class HttpClient:
     def __init__(self, api_url: str, api_key: str):
         self.api_url = api_url
         self.api_key = api_key
+        self.user_id = 0
 
     async def request(self, path: str, method: str = 'GET', params: Optional[Dict] = None) -> Optional[Any]:
         if params is None:
             params = {}
 
         url = f'{self.api_url}{path}'
-        headers = {'x-api-key': self.api_key}
+        x_api_key = encrypt_data(f'{self.user_id}_{self.api_key}', cfg.app.secret)
+        headers = {'x-api-key': x_api_key, 'Content-Type': 'application/json'}
 
         async with aiohttp.ClientSession() as session:
             try:

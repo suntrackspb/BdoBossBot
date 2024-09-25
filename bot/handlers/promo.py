@@ -5,7 +5,7 @@ from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 
-from api.schemas.promocodes import PromoCodeSchema
+from common.schemas.promocodes import PromoCodeSchema
 from bot.keyboards.inline import add_promo_code_keyboard
 from bot.keyboards.reply import main_keyboard
 from bot.states.promocodes import AddPromoStates

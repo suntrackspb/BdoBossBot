@@ -1,7 +1,7 @@
 import asyncio
 
 import uvicorn
-from api.config import config as cfg
+from common.config import config as cfg
 from api.database.ping import ping_postgres_server
 
 if __name__ == '__main__':

@@ -4,9 +4,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
 from api.dependencies import get_promo_code_service
-from api.schemas.promocodes import PromoCodeSchema
 from api.services import PromoCodeService
-from api.utils.check_signature import verify_api_key
+from api.utils.check_signature import verify_webapp_signature
+from common.schemas.promocodes import PromoCodeSchema
 
 router = APIRouter()
 
@@ -47,7 +47,7 @@ async def get_specific_promo_codes(
 )
 async def add_promo_code(
         payload: PromoCodeSchema,
-        _: Annotated[None, Depends(verify_api_key)],
+        _: Annotated[bool, Depends(verify_webapp_signature)],
         service: Annotated[PromoCodeService, Depends(get_promo_code_service)]
 ):
     promo = await service.check_promo_code(promo_code=payload.code)

@@ -1,12 +1,12 @@
 from datetime import datetime, timedelta
 from typing import List
 
-from api.config import config as cfg
 from api.crud.notifications import NotificationCrud
 from api.models import Boss, User
-from api.schemas.notification import BossNotificationSchema
-from api.schemas.op_status import OpStatusSchema
 from api.utils.constants import Push
+from common.config import config as cfg
+from common.schemas.notification import BossNotificationSchema
+from common.schemas.op_status import OpStatusSchema
 
 
 class NotificationService:
@@ -14,10 +14,15 @@ class NotificationService:
         self.crud = crud
         self.cfg = cfg
 
-    async def generate_notification(self, user_id: int, bosses: List[Boss]):
-        bosses_ids = [boss.id for boss in bosses]
+    async def generate_notification(self, user_id: int, bosses: List[Boss], is_selected: bool):
+        bosses_ids = []
+
+        if is_selected:
+            bosses_ids = [boss.id for boss in bosses]
         await self.crud.add_notifications(chat_id=user_id, bosses=bosses_ids)
-        return OpStatusSchema(status_code=200, message='Successfully added notification')
+        return OpStatusSchema(
+            status_code=200, message='Successfully added notification', data=is_selected
+        )
 
     async def add_notifications(self, user: User, boss_id: int, is_selected: bool):
         if is_selected:

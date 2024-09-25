@@ -1,7 +1,7 @@
 from aiogram import Router
 from aiogram.types import CallbackQuery
 
-from api.schemas.user import UserSchema
+from common.schemas.user import UserSchema
 from bot.keyboards.inline import notification_keyboard
 from bot.utils.constants import get_status_message
 from bot.utils.http_client import HttpClient

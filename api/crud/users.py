@@ -1,11 +1,11 @@
 from typing import Type, List
 
-from sqlalchemy import select, case, bindparam, BigInteger
+from sqlalchemy import select, case
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.models import User, Notification, Boss
-from api.schemas.boss import UserBossSchema
-from api.schemas.user import UserUpdateSchema
+from common.schemas.boss import UserBossSchema
+from common.schemas.user import UserUpdateDataSchema
 
 
 class UserCrud:
@@ -63,7 +63,7 @@ class UserCrud:
         await self.db.refresh(user)
         return user
 
-    async def update_user(self, user: User, user_update: UserUpdateSchema) -> User:
+    async def update_user(self, user: User, user_update: UserUpdateDataSchema) -> User:
         update_data = user_update.dict(exclude_unset=True)
         for key, value in update_data.items():
             setattr(user, key, value)

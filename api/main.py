@@ -1,6 +1,6 @@
 import os
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.responses import HTMLResponse
@@ -62,10 +62,8 @@ app.include_router(
 
 @app.get("/", tags=["Root"])
 @app.get("/api", tags=["Root"])
-async def read_root(request: Request) -> HTMLResponse:
+async def read_root() -> HTMLResponse:
     return HTMLResponse(
         status_code=404,
-        content=f"<center><h1>404 Not Found</h1></center><hr>"
-                f"<center>ip: {request.headers.get('X-Real-IP')}</center>"
-                f"<center>nginx/1.18.0 (Ubuntu)</center>"
+        content="<center><h1>404 Not Found</h1></center><hr><center>nginx/1.18.0 (Ubuntu)</center>"
     )
