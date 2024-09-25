@@ -1,5 +1,6 @@
 import hashlib
 import hmac
+import json
 from operator import itemgetter
 from urllib.parse import parse_qsl
 
@@ -37,7 +38,9 @@ async def verify_webapp_signature(request: Request):
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid signature",
             )
-        return parsed_data
+
+        json_user = json.loads(parsed_data.get("user"))
+        return json_user.get("id")
 
     if request.headers.get("X-Api-Key"):
         x_api_key = request.headers.get("X-Api-Key")
@@ -47,6 +50,11 @@ async def verify_webapp_signature(request: Request):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid API Key",
+            )
+        if not bool(int(user)):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid User ID",
             )
         return user
 
