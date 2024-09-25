@@ -12,7 +12,7 @@ from common.schemas.telegram import InitData
 from common.utils.security import decrypt_data
 
 
-async def verify_webapp_signature(request: Request):
+async def verify_webapp_signature(request: Request) -> int:
     print(request.headers)
     if request.headers.get("Authorization"):
         init_data = request.headers.get("Authorization")
@@ -40,7 +40,7 @@ async def verify_webapp_signature(request: Request):
             )
 
         json_user = json.loads(parsed_data.get("user"))
-        return json_user.get("id")
+        return int(json_user.get("id"))
 
     if request.headers.get("X-Api-Key"):
         x_api_key = request.headers.get("X-Api-Key")
@@ -56,7 +56,7 @@ async def verify_webapp_signature(request: Request):
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Invalid User ID",
             )
-        return user
+        return int(user)
 
     raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="No API key provided")
 
