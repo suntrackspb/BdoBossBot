@@ -51,6 +51,8 @@ class UserUpdateDataSchema(BaseModel):
     push10: bool | None = None
     push30: bool | None = None
 
+    model_config = camel_to_snake
+
 
 class UserUpdateSchema(BaseModel):
     init_data: InitData
