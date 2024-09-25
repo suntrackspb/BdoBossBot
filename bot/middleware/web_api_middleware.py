@@ -15,6 +15,7 @@ class WebApiMiddleware:
             event: TelegramObject,
             data: Dict[str, Any],
     ) -> Any:
+        self.client.user_id = event.message.chat.id
         data["client"] = self.client
 
         result = await handler(event, data)
