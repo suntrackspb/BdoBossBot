@@ -7,10 +7,9 @@ from api.dependencies import get_notify_service, get_boss_service, get_user_serv
 from api.services.bosses import BossService
 from api.services.notification import NotificationService
 from api.services.users import UserService
-from api.utils.check_signature import check_webapp_signature, verify_webapp_signature
-from common.schemas.notification import BossNotificationSchema
+from api.utils.check_signature import verify_webapp_signature
+from common.schemas.notification import BossNotificationSchema, NotificationAddSchema, NotificationAddAllSchema
 from common.schemas.op_status import OpStatusSchema
-from common.schemas.telegram import NotificationAllSchema, NotificationAddSchema
 from common.schemas.user import SpecificUserSchema
 
 router = APIRouter()
@@ -41,7 +40,7 @@ async def add_notification(
     response_description="Status operation",
 )
 async def add_notification(
-        payload: NotificationAllSchema,
+        payload: NotificationAddAllSchema,
         user_id: Annotated[int, Depends(verify_webapp_signature)],
         boss_service: Annotated[BossService, Depends(get_boss_service)],
         notify_service: Annotated[NotificationService, Depends(get_notify_service)],
