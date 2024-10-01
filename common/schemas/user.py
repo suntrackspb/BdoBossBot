@@ -3,9 +3,8 @@ from typing import List
 
 from pydantic import BaseModel
 
-from common.schemas.boss import UserBossSchema
-from common.schemas.telegram import InitData
 from api.utils.case_converter import camel_to_snake
+from common.schemas.boss import UserBossSchema
 
 
 class UserSchema(BaseModel):
@@ -53,9 +52,3 @@ class UserUpdateDataSchema(BaseModel):
 
     model_config = camel_to_snake
 
-
-class UserUpdateSchema(BaseModel):
-    init_data: InitData
-    payload: UserUpdateDataSchema
-
-    model_config = camel_to_snake

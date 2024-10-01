@@ -5,7 +5,7 @@ from starlette import status
 
 from api.dependencies import get_user_service
 from api.services.users import UserService
-from api.utils.check_signature import check_webapp_signature, verify_webapp_signature
+from api.utils.check_signature import verify_webapp_signature
 from common.schemas.op_status import OpStatusSchema
 from common.schemas.user import UserSchema, UserCreateSchema, UserUpdateDataSchema
 
