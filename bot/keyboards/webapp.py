@@ -7,7 +7,7 @@ def webapp_builder() -> InlineKeyboardMarkup:
     keyboard.button(
         text="Open",
         web_app=WebAppInfo(
-            url='https://e3a1-2a0e-8086-0-301-e055-bc0d-ae20-a886.ngrok-free.app/',
+            url='http://127.0.0.1:5173',
         )
     )
     return keyboard.as_markup()
