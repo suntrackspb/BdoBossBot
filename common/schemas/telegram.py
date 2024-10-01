@@ -38,7 +38,6 @@ class InitData(BaseModel):
 
 
 class NotificationAddSchema(BaseModel):
-    init_data: InitData
     boss_id: int
     is_selected: bool
 
@@ -46,7 +45,6 @@ class NotificationAddSchema(BaseModel):
 
 
 class NotificationAllSchema(BaseModel):
-    init_data: InitData
     is_selected: bool
 
     model_config = camel_to_snake
