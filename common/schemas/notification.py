@@ -2,6 +2,8 @@ from typing import List
 
 from pydantic import BaseModel
 
+from api.utils.case_converter import camel_to_snake
+
 
 class NotificationSchema(BaseModel):
     chat_id: int
@@ -15,7 +17,13 @@ class BossNotificationSchema(BaseModel):
     users: List[NotificationSchema]
 
 
-class AddNotification(BaseModel):
-    init_data: dict
-    boss_list: List[int]
-    push_list: List[int]
+class NotificationAddAllSchema(BaseModel):
+    is_selected: bool
+
+    model_config = camel_to_snake
+
+
+class NotificationAddSchema(NotificationAddAllSchema):
+    boss_id: int
+
+    model_config = camel_to_snake
