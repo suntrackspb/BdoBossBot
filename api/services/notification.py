@@ -32,7 +32,6 @@ class NotificationService:
             await self.crud.remove_notification(chat_id=user.chat_id, boss_id=boss_id)
             return OpStatusSchema(status_code=200, message='Successfully removed notification')
 
-
     async def get_notify_users_by_boss(self, boss: Boss):
         current_time = datetime.now().strftime("%H:%M")
         boss_time = datetime.strptime(boss.boss_time, "%H:%M")

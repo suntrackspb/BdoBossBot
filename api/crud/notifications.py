@@ -14,6 +14,7 @@ class NotificationCrud:
 
     async def add_notification(self, chat_id: int, boss_id: int):
         self.db.add(Notification(chat_id=chat_id, boss_id=boss_id))
+        await self.db.commit()
 
     async def remove_notification(self, chat_id: int, boss_id: int):
         query = delete(Notification).where(Notification.chat_id == chat_id).where(Notification.boss_id == boss_id)

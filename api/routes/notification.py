@@ -7,7 +7,7 @@ from api.dependencies import get_notify_service, get_boss_service, get_user_serv
 from api.services.bosses import BossService
 from api.services.notification import NotificationService
 from api.services.users import UserService
-from api.utils.check_signature import check_webapp_signature
+from api.utils.check_signature import check_webapp_signature, verify_webapp_signature
 from common.schemas.notification import BossNotificationSchema
 from common.schemas.op_status import OpStatusSchema
 from common.schemas.telegram import NotificationAllSchema, NotificationAddSchema
@@ -23,16 +23,15 @@ router = APIRouter()
     response_description="Status operation",
 )
 async def add_notification(
-        init_data: NotificationAddSchema,
+        payload: NotificationAddSchema,
+        user_id: Annotated[int, Depends(verify_webapp_signature)],
         user_service: Annotated[UserService, Depends(get_user_service)],
         notify_service: Annotated[NotificationService, Depends(get_notify_service)],
 ):
-    check = await check_webapp_signature(init_data.init_data)
-    print(init_data)
-    user = await user_service.get_user(user_id=check.user.id)
+    user = await user_service.get_user(user_id=user_id)
     if user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-    return await notify_service.add_notifications(user, init_data.boss_id, init_data.is_selected)
+    return await notify_service.add_notifications(user, payload.boss_id, payload.is_selected)
 
 
 @router.post(
@@ -42,14 +41,14 @@ async def add_notification(
     response_description="Status operation",
 )
 async def add_notification(
-        init_data: NotificationAllSchema,
+        payload: NotificationAllSchema,
+        user_id: Annotated[int, Depends(verify_webapp_signature)],
         boss_service: Annotated[BossService, Depends(get_boss_service)],
         notify_service: Annotated[NotificationService, Depends(get_notify_service)],
 ):
-    check = await check_webapp_signature(init_data.init_data)
     bosses = await boss_service.get_bosses_list()
     return await notify_service.generate_notification(
-        user_id=check.user.id, bosses=bosses, is_selected=init_data.is_selected
+        user_id=user_id, bosses=bosses, is_selected=payload.is_selected
     )
 
 
@@ -61,6 +60,7 @@ async def add_notification(
 )
 async def get_user_info(
         user_id: int,
+        _: Annotated[int, Depends(verify_webapp_signature)],
         service: Annotated[UserService, Depends(get_user_service)]
 ):
     return await service.get_specific_user(user_id=user_id)
@@ -73,7 +73,7 @@ async def get_user_info(
     response_description="List of users to notify about the next boss",
 )
 async def get_notify_list(
-        # _: Annotated[None, Depends(verify_api_key)],
+        _: Annotated[int, Depends(verify_webapp_signature)],
         boss_service: Annotated[BossService, Depends(get_boss_service)],
         notify_service: Annotated[NotificationService, Depends(get_notify_service)]
 ):
