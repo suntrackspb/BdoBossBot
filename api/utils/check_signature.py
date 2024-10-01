@@ -13,11 +13,12 @@ from common.utils.security import decrypt_data
 
 
 async def verify_webapp_signature(request: Request) -> int:
-    print(request.headers)
+    # print(request.headers)
     if request.headers.get("Authorization"):
         init_data = request.headers.get("Authorization")
         try:
             parsed_data = dict(parse_qsl(init_data, strict_parsing=True))
+            print(parsed_data)
         except ValueError:  # pragma: no cover
             # Init data is not a valid query string
             return False
@@ -29,10 +30,15 @@ async def verify_webapp_signature(request: Request) -> int:
         data_check_string = "\n".join(
             f"{k}={v}" for k, v in sorted(parsed_data.items(), key=itemgetter(0))
         )
+
         secret_key = hmac.new(key=b"WebAppData", msg=cfg.tlg.bot_token.encode(), digestmod=hashlib.sha256)
         calculated_hash = hmac.new(
             key=secret_key.digest(), msg=data_check_string.encode(), digestmod=hashlib.sha256
         ).hexdigest()
+
+        print(hash_)
+        print(calculated_hash)
+
         if hash_ != calculated_hash:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -46,6 +52,9 @@ async def verify_webapp_signature(request: Request) -> int:
         x_api_key = request.headers.get("X-Api-Key")
         print('x_api_key', x_api_key)
         user, token = decrypt_data(x_api_key, cfg.app.secret).split("_", maxsplit=1)
+        print(user)
+        print('token', token)
+        print('cfg.token', cfg.tlg.bot_token)
         if token != cfg.tlg.bot_token:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
