@@ -71,7 +71,7 @@ async def settings(message: Message):
             f"Channel type: `{message.forward_from_chat.type}`",
             parse_mode="Markdown"
         )
-    print (message.model_dump_json())
+    print(message.model_dump_json())
     await message.answer(
         text=message.text,
     )
