@@ -1,11 +1,12 @@
 import os
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.responses import HTMLResponse
 
 from api import routes
+from common.config import config as cfg
 
 root = os.path.dirname(os.path.abspath(__file__))
 origins = ["*"]
@@ -62,7 +63,9 @@ app.include_router(
 
 @app.get("/", tags=["Root"])
 @app.get("/api", tags=["Root"])
-async def read_root() -> HTMLResponse:
+async def read_root(request: Request) -> HTMLResponse:
+    cfg.app.logger.info(request.headers)
+    cfg.app.logger.info(request.user)
     return HTMLResponse(
         status_code=404,
         content="<center><h1>404 Not Found</h1></center><hr><center>nginx/1.18.0 (Ubuntu)</center>"

@@ -20,9 +20,13 @@ bot_token = env('BOT_TOKEN')
 web_api_url = env('WEB_API_URL')
 http_client = HttpClient(api_url=web_api_url, api_key=bot_token)
 
-session = AiohttpSession(proxy=config.proxy.URL) if config.proxy.URL else None
+# session = AiohttpSession(proxy=config.proxy.URL) if config.proxy.URL else None
 
-bot = Bot(bot_token, session=session, default=DefaultBotProperties(parse_mode='HTML'))
+bot = Bot(
+    bot_token + '/test',
+    # session=session,
+    default=DefaultBotProperties(parse_mode='HTML'),
+)
 storage = MemoryStorage()
 dp = Dispatcher(storage=storage)
 
@@ -77,9 +81,9 @@ async def main() -> None:
         # scheduler.add_job(send_notification, trigger=trigger, args=(bot, http_client))
         # scheduler.start()
         await dp.start_polling(bot, polling_timeout=3)
+
+    except (KeyboardInterrupt, SystemExit):
+        print("Bye!")
     finally:
         await dp.storage.close()
         await bot.session.close()
-
-
-
